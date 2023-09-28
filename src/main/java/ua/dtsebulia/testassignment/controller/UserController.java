@@ -12,6 +12,9 @@ import ua.dtsebulia.testassignment.service.UserService;
 
 import java.text.ParseException;
 
+/**
+ * Controller class for managing user-related operations.
+ */
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/users")
@@ -20,12 +23,23 @@ public class UserController {
 
     private final UserService userService;
 
+    /**
+     * Get all users.
+     *
+     * @return ResponseEntity containing a list of all users.
+     */
     @GetMapping
-    public ResponseEntity<?> getAllUsers() throws RuntimeException {
+    public ResponseEntity<?> getAllUsers() {
         log.info("Getting all users");
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
+    /**
+     * Get a user by their ID.
+     *
+     * @param id The ID of the user to retrieve.
+     * @return ResponseEntity containing the requested user or an error message if not found.
+     */
     @GetMapping("{id}")
     public ResponseEntity<?> getUserById(@PathVariable Integer id) {
         log.info("Getting user with id {}", id);
@@ -40,6 +54,13 @@ public class UserController {
         }
     }
 
+    /**
+     * Get users with birthdays within a specified date range.
+     *
+     * @param from Start date of the range.
+     * @param to   End date of the range.
+     * @return ResponseEntity containing a list of users within the date range or an error message if invalid input.
+     */
     @GetMapping("/birthdays")
     public ResponseEntity<?> getUserByBirthdayRange(@RequestParam String from, @RequestParam String to) {
         log.info("Getting users with birthdays between {} and {}", from, to);
@@ -58,13 +79,20 @@ public class UserController {
         }
     }
 
+    /**
+     * Create a new user.
+     *
+     * @param user The user object to be created.
+     * @return ResponseEntity containing the newly created user or an error message if validation fails.
+     * @throws ParseException Thrown if there is an issue parsing the date.
+     */
     @PostMapping
     public ResponseEntity<?> createUser(@RequestBody @Valid User user) throws ParseException {
         try {
             log.info("Creating user {}", user);
             User createdUser = userService.createUser(user);
             return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
-        } catch (MinimumAgeException ex){
+        } catch (MinimumAgeException ex) {
             log.error("User is not above minimum age");
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
@@ -82,6 +110,13 @@ public class UserController {
         }
     }
 
+    /**
+     * Update an existing user.
+     *
+     * @param id   The ID of the user to be updated.
+     * @param user The updated user object.
+     * @return ResponseEntity containing the updated user or an error message if the user is not found or validation fails.
+     */
     @PutMapping("{id}")
     public ResponseEntity<?> updateUser(@PathVariable Integer id, @RequestBody @Valid User user) {
         log.info("Updating user with id {}", id);
@@ -93,7 +128,7 @@ public class UserController {
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
                     .body("User not found with id: " + id);
-        } catch (MinimumAgeException ex){
+        } catch (MinimumAgeException ex) {
             log.error("User is not above minimum age");
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
@@ -106,6 +141,12 @@ public class UserController {
         }
     }
 
+    /**
+     * Delete a user by their ID.
+     *
+     * @param id The ID of the user to be deleted.
+     * @return ResponseEntity indicating success or an error message if the user is not found.
+     */
     @DeleteMapping("{id}")
     public ResponseEntity<?> deleteUser(@PathVariable Integer id) {
         log.info("Deleting user with id {}", id);
