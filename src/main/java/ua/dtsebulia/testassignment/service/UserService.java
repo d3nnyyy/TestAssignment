@@ -65,4 +65,31 @@ public class UserService {
 
         userRepository.deleteById(id);
     }
+
+    public User updateUser(Integer id, User user) {
+
+        User existingUser = userRepository.findById(id).orElseThrow(
+                () -> new UserNotFoundException("User not found with id: " + id)
+        );
+
+        if (!isUserAboveMinimumAge(user)) {
+            throw new MinimumAgeException("User is not above minimum age");
+        }
+
+        String email = user.getEmail();
+        if (userRepository.findByEmail(email).isPresent() && !email.equals(existingUser.getEmail())) {
+            throw new UserAlreadyExistsException("User with email " + email + " already exists");
+        }
+        updateUserWithNullChecks(user, existingUser);
+        return userRepository.save(existingUser);
+    }
+
+    private static void updateUserWithNullChecks(User user, User existingUser) {
+        if (user.getFirstName() != null) existingUser.setFirstName(user.getFirstName());
+        if (user.getLastName() != null) existingUser.setLastName(user.getLastName());
+        if (user.getDateOfBirth() != null) existingUser.setDateOfBirth(user.getDateOfBirth());
+        if (user.getEmail() != null) existingUser.setEmail(user.getEmail());
+        if (user.getAddress() != null) existingUser.setAddress(user.getAddress());
+        if (user.getPhoneNumber() != null) existingUser.setPhoneNumber(user.getPhoneNumber());
+    }
 }

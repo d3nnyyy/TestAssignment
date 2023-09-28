@@ -62,6 +62,30 @@ public class UserController {
         }
     }
 
+    @PutMapping("{id}")
+    public ResponseEntity<?> updateUser(@PathVariable Integer id, @RequestBody @Valid User user) {
+        log.info("Updating user with id {}", id);
+        try {
+            User updatedUser = userService.updateUser(id, user);
+            return ResponseEntity.ok(updatedUser);
+        } catch (UserNotFoundException ex) {
+            log.error("User not found with id: {}", id);
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body("User not found with id: " + id);
+        } catch (MinimumAgeException ex){
+            log.error("User is not above minimum age");
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body("User is not above minimum age");
+        } catch (UserAlreadyExistsException ex) {
+            log.error("User with email {} already exists", user.getEmail());
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body("User with email " + user.getEmail() + " already exists");
+        }
+    }
+
     @DeleteMapping("{id}")
     public ResponseEntity<?> deleteUser(@PathVariable Integer id) {
         log.info("Deleting user with id {}", id);
