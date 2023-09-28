@@ -6,9 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ua.dtsebulia.testassignment.exception.MinimumAgeException;
-import ua.dtsebulia.testassignment.exception.UserAlreadyExistsException;
-import ua.dtsebulia.testassignment.exception.UserNotFoundException;
+import ua.dtsebulia.testassignment.exception.*;
 import ua.dtsebulia.testassignment.model.User;
 import ua.dtsebulia.testassignment.service.UserService;
 
@@ -39,6 +37,24 @@ public class UserController {
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
                     .body("User not found with id: " + id);
+        }
+    }
+
+    @GetMapping("/birthdays")
+    public ResponseEntity<?> getUserByBirthdayRange(@RequestParam String from, @RequestParam String to) {
+        log.info("Getting users with birthdays between {} and {}", from, to);
+        try {
+            return ResponseEntity.ok(userService.getUserByBirthdayRange(from, to));
+        } catch (InvalidDateRangeException ex) {
+            log.error("'from' date must be before 'to' date");
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body("'from' date must be before 'to' date");
+        } catch (InvalidDateFormatException ex) {
+            log.error("The format of the date must be yyyy-MM-dd");
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body("The format of the date must be yyyy-MM-dd");
         }
     }
 
