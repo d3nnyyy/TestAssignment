@@ -3,13 +3,14 @@ package ua.dtsebulia.testassignment.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import ua.dtsebulia.testassignment.exception.MinimumAgeException;
-import ua.dtsebulia.testassignment.exception.UserAlreadyExistsException;
-import ua.dtsebulia.testassignment.exception.UserNotFoundException;
+import ua.dtsebulia.testassignment.exception.*;
 import ua.dtsebulia.testassignment.model.User;
 import ua.dtsebulia.testassignment.repository.UserRepository;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -91,5 +92,27 @@ public class UserService {
         if (user.getEmail() != null) existingUser.setEmail(user.getEmail());
         if (user.getAddress() != null) existingUser.setAddress(user.getAddress());
         if (user.getPhoneNumber() != null) existingUser.setPhoneNumber(user.getPhoneNumber());
+    }
+
+    public List<User> getUserByBirthdayRange(String from, String to) {
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        dateFormat.setLenient(false);
+
+        Date fromDate;
+        Date toDate;
+
+        try {
+            fromDate = dateFormat.parse(from);
+            toDate = dateFormat.parse(to);
+        } catch (ParseException e) {
+            throw new InvalidDateFormatException("Invalid date format");
+        }
+
+        if (fromDate.after(toDate)) {
+            throw new InvalidDateRangeException("'from' date must be before 'to' date");
+        }
+
+        return userRepository.findUsersByBirthdayRange(fromDate, toDate);
     }
 }
