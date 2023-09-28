@@ -10,7 +10,6 @@ import ua.dtsebulia.testassignment.model.User;
 import ua.dtsebulia.testassignment.repository.UserRepository;
 
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 @Service
@@ -56,5 +55,14 @@ public class UserService {
         dob.setTime(user.getDateOfBirth());
 
         return dob.before(minBirthDate) || dob.equals(minBirthDate);
+    }
+
+    public void deleteUser(Integer id) {
+
+        userRepository.findById(id).orElseThrow(
+                () -> new UserNotFoundException("User not found with id: " + id)
+        );
+
+        userRepository.deleteById(id);
     }
 }
