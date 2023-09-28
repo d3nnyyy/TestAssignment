@@ -9,7 +9,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Repository interface for managing User entities.
+ */
 public interface UserRepository extends JpaRepository<User, Integer> {
+
     Optional<User> findByEmail(String email);
 
     @Query("SELECT u " +

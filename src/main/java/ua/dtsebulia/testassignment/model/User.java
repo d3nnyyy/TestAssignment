@@ -13,6 +13,9 @@ import jakarta.validation.constraints.NotNull;
 
 import java.util.Date;
 
+/**
+ * Represents a user entity in the system.
+ */
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
