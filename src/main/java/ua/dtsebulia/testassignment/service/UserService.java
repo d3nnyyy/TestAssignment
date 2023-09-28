@@ -34,6 +34,15 @@ public class UserService {
 
     public User createUser(User user) {
 
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        dateFormat.setLenient(false);
+
+        try {
+            dateFormat.parse(user.getDateOfBirth().toString());
+        } catch (ParseException e) {
+            throw new InvalidDateFormatException("The format of the date must be yyyy-MM-dd");
+        }
+
         if (!isUserAboveMinimumAge(user)) {
             throw new MinimumAgeException("User is not above minimum age");
         }

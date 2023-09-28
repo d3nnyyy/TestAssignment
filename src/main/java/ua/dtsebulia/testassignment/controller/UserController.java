@@ -69,12 +69,16 @@ public class UserController {
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
                     .body("User is not above minimum age");
-        }
-        catch (UserAlreadyExistsException ex) {
+        } catch (UserAlreadyExistsException ex) {
             log.error("User with email {} already exists", user.getEmail());
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
                     .body("User with email " + user.getEmail() + " already exists");
+        } catch (InvalidDateFormatException ex) {
+            log.error("The format of the date must be yyyy-MM-dd");
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body("The format of the date must be yyyy-MM-dd");
         }
     }
 
