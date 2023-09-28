@@ -10,8 +10,6 @@ import ua.dtsebulia.testassignment.exception.*;
 import ua.dtsebulia.testassignment.model.User;
 import ua.dtsebulia.testassignment.service.UserService;
 
-import java.text.ParseException;
-
 /**
  * Controller class for managing user-related operations.
  */
@@ -84,10 +82,9 @@ public class UserController {
      *
      * @param user The user object to be created.
      * @return ResponseEntity containing the newly created user or an error message if validation fails.
-     * @throws ParseException Thrown if there is an issue parsing the date.
      */
     @PostMapping
-    public ResponseEntity<?> createUser(@RequestBody @Valid User user) throws ParseException {
+    public ResponseEntity<?> createUser(@RequestBody @Valid User user) {
         try {
             log.info("Creating user {}", user);
             User createdUser = userService.createUser(user);
