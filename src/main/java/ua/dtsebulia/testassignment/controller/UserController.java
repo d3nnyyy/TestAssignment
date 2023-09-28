@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ua.dtsebulia.testassignment.exception.MinimumAgeException;
 import ua.dtsebulia.testassignment.exception.UserAlreadyExistsException;
 import ua.dtsebulia.testassignment.exception.UserNotFoundException;
 import ua.dtsebulia.testassignment.model.User;
@@ -47,7 +48,13 @@ public class UserController {
             log.info("Creating user {}", user);
             User createdUser = userService.createUser(user);
             return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
-        } catch (UserAlreadyExistsException ex) {
+        } catch (MinimumAgeException ex){
+            log.error("User is not above minimum age");
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body("User is not above minimum age");
+        }
+        catch (UserAlreadyExistsException ex) {
             log.error("User with email {} already exists", user.getEmail());
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
