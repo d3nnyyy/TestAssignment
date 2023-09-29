@@ -24,7 +24,7 @@ public class UserService {
     private final UserRepository userRepository;
 
     @Value("${user.minimumAge}")
-    private String minimumAge;
+    private int minimumAge;
 
     /**
      * Get a list of all users.
@@ -93,7 +93,7 @@ public class UserService {
     private boolean isUserAboveMinimumAge(User user) {
 
         Calendar minBirthDate = Calendar.getInstance();
-        minBirthDate.add(Calendar.YEAR, -Integer.parseInt(minimumAge));
+        minBirthDate.add(Calendar.YEAR, - minimumAge);
 
         Calendar dob = Calendar.getInstance();
         dob.setTime(user.getDateOfBirth());
