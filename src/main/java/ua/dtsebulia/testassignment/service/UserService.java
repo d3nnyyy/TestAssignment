@@ -2,6 +2,7 @@ package ua.dtsebulia.testassignment.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.stereotype.Service;
 import ua.dtsebulia.testassignment.exception.*;
 import ua.dtsebulia.testassignment.model.User;
@@ -62,8 +63,9 @@ public class UserService {
         dateFormat.setLenient(false);
 
         try {
-            dateFormat.parse(user.getDateOfBirth().toString());
-        } catch (ParseException e) {
+            String format = dateFormat.format(user.getDateOfBirth());
+            user.setDateOfBirth(dateFormat.parse(format));
+        } catch (HttpMessageNotReadableException | ParseException e) {
             throw new InvalidDateFormatException("The format of the date must be yyyy-MM-dd");
         }
 
